@@ -81,7 +81,7 @@ public class SendScreen extends Thread{
 				dos.writeInt(compress.length);
 				dos.write(compress);
 				dos.flush();
-				Thread.sleep(10);
+				//Thread.sleep(10);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -89,11 +89,7 @@ public class SendScreen extends Thread{
 			} catch (AWTException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
 		}
 	}
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.awt.Image;
 import java.awt.Graphics;
@@ -85,6 +87,7 @@ public class ReceiveScreen extends Thread{
     }
 	@Override
 	public void run() {
+		int i = 0;
 		while (continueLoop) {
 			try {
 //				byte[] result = new byte[1024*1024];
@@ -113,6 +116,7 @@ public class ReceiveScreen extends Thread{
 						//Draw the received screenshots
 						Graphics graphics = cPanel.getGraphics();
 						graphics.drawImage(image1, 0, 0, cPanel.getWidth(), cPanel.getHeight(), cPanel);
+						System.out.println(++i + " : " + ZonedDateTime.now().toInstant().toEpochMilli());
 					}
 				}
 			} catch (IOException e) {
