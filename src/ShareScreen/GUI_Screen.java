@@ -56,12 +56,12 @@ public class GUI_Screen extends Thread{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		DataInputStream inputStream;
+		InputStream inputStream;
 		try {
-			inputStream = new DataInputStream(cSocket.getInputStream());
+			inputStream = cSocket.getInputStream();
 			GUI();
-			//new ReceiveScreen(inputStream , cPanel);
-			new ReceiveScreen(cSocket, cPanel);
+			new ReceiveScreen(inputStream , cPanel);
+			//new ReceiveScreen(cSocket, cPanel);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

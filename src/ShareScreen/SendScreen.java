@@ -36,60 +36,81 @@ public class SendScreen extends Thread{
 		start();
 	}
 	
-	private static byte[] screenshot() throws AWTException, IOException {
-		GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gDev = gEnv.getDefaultScreenDevice();
-		Robot robot = new Robot(gDev);
-		Dimension dim=Toolkit.getDefaultToolkit().getScreenSize();
-		Rectangle rectangle=new Rectangle(dim);
-		
-		//Screenshot and save in file
-		//Take screenshot save into bufferImage
-		BufferedImage bufferedImage =  robot.createScreenCapture(rectangle);
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(bufferedImage, "jpg", baos);
-		byte[] bytes = baos.toByteArray();
-		return bytes;
-	}
-	
-	private static byte[] compress(byte[] image) throws IOException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(image.length);
-		GZIPOutputStream gzip = new GZIPOutputStream(bos);
-		gzip.write(image);
-		gzip.close();
-		byte[] compressed = bos.toByteArray();
-		bos.close();
-		gzip.close();
-		return compressed;
-	}
+//	private static byte[] screenshot() throws AWTException, IOException {
+//		GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//		GraphicsDevice gDev = gEnv.getDefaultScreenDevice();
+//		Robot robot = new Robot(gDev);
+//		Dimension dim=Toolkit.getDefaultToolkit().getScreenSize();
+//		Rectangle rectangle=new Rectangle(dim);
+//		
+//		//Screenshot and save in file
+//		//Take screenshot save into bufferImage
+//		BufferedImage bufferedImage =  robot.createScreenCapture(rectangle);
+//		
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		ImageIO.write(bufferedImage, "jpg", baos);
+//		byte[] bytes = baos.toByteArray();
+//		return bytes;
+//	}
+//	
+//	private static byte[] compress(byte[] image) throws IOException {
+//		ByteArrayOutputStream bos = new ByteArrayOutputStream(image.length);
+//		GZIPOutputStream gzip = new GZIPOutputStream(bos);
+//		gzip.write(image);
+//		gzip.close();
+//		byte[] compressed = bos.toByteArray();
+//		bos.close();
+//		gzip.close();
+//		return compressed;
+//	}
 
 	@Override
 	public void run() {
-		while (true) {
-			byte[] compress;
-			try {
-//				compress = compress(screenshot());
-//				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-//				dos.write(compress);
-//				dos.flush();
-//				Thread.sleep(10);
+		DataOutputStream dos = null;
+		byte[] compress = null;
+		GraphicsEnvironment gEnv;
+		GraphicsDevice gDev;
+		Robot robot;
+		Dimension dim;
+		Rectangle rectangle;
+		BufferedImage bufferedImage;
+		ByteArrayOutputStream baos;
+		byte[] image;
+		ByteArrayOutputStream bos;
+		GZIPOutputStream gzip;
+		try {
+			
+			//System.out.println("Do dai compress: " + compress.length);
+			while (true) {
+				//Take screenshot save into image byte array
+				gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				gDev = gEnv.getDefaultScreenDevice();
+				robot = new Robot(gDev);
+				dim=Toolkit.getDefaultToolkit().getScreenSize();
+				rectangle=new Rectangle(dim);
 				
+				bufferedImage =  robot.createScreenCapture(rectangle);
 				
-				compress = compress(screenshot());
-				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-				dos.writeInt(compress.length);
+				baos = new ByteArrayOutputStream();
+				ImageIO.write(bufferedImage, "jpg", baos);
+				
+				image = baos.toByteArray();
+				
+				//Compress image
+				bos = new ByteArrayOutputStream(image.length);
+				gzip = new GZIPOutputStream(bos);
+				gzip.write(image);
+				gzip.close();
+				compress = bos.toByteArray();
+				bos.close();
+				
+				//Send compressed image to client
+				dos = new DataOutputStream(socket.getOutputStream());
 				dos.write(compress);
-				dos.flush();
-				//Thread.sleep(10);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (AWTException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("Server that bai");
 		}
 	}
 }
